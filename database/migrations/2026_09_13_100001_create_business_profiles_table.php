@@ -15,12 +15,16 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->unique()->constrained('users')->cascadeOnDelete();
             $table->string('business_name');
+            $table->string('owner_name')->nullable();
+            $table->string('business_type')->nullable(); // LLC, Sole Proprietor, Corporation, Partnership
+            $table->string('phone_number')->nullable();
+            $table->string('tax_id')->nullable(); // EIN / SSN
             $table->string('city')->nullable();
             $table->string('state')->nullable();
             $table->string('zip_code', 20)->nullable();
             $table->string('cover_photo')->nullable();
             $table->unsignedTinyInteger('years_experience')->nullable();
-            $table->date('member_since');
+            $table->date('member_since')->nullable();
             $table->boolean('is_elite')->default(false);
             $table->boolean('is_veteran_owned')->default(false);
             $table->boolean('is_id_verified')->default(false);
@@ -28,6 +32,7 @@ return new class extends Migration
             $table->boolean('is_license_verified')->default(false);
             $table->string('license_number')->nullable();
             $table->string('business_hours')->nullable();
+            $table->unsignedInteger('service_radius')->nullable(); // radius in miles
             $table->json('languages')->nullable();
             $table->json('service_areas')->nullable();
             $table->json('gallery_images')->nullable();
@@ -37,6 +42,15 @@ return new class extends Migration
             $table->unsignedInteger('review_count')->default(0);
             $table->text('bio')->nullable();
             $table->string('website_url')->nullable();
+            $table->string('linkedin_url')->nullable();
+            $table->string('facebook_url')->nullable();
+            $table->string('instagram_url')->nullable();
+            $table->string('twitter_url')->nullable();
+            $table->unsignedTinyInteger('onboarding_step')->default(1);
+            $table->boolean('onboarding_completed')->default(false);
+            $table->timestamp('terms_accepted_at')->nullable();
+            $table->timestamp('id_me_verified_at')->nullable();
+            $table->json('id_me_data')->nullable();
             $table->timestamps();
         });
     }

@@ -14,9 +14,10 @@ return new class extends Migration
         Schema::create('notifications', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
-            $table->enum('type', ['quote_request', 'message', 'review', 'invoice_paid']);
+            $table->string('type'); // quote_request, quote_received, message, review, invoice_paid
             $table->string('title');
-            $table->string('body');
+            $table->text('body');
+            $table->json('data')->nullable();
             $table->timestamp('read_at')->nullable();
             $table->timestamps();
 

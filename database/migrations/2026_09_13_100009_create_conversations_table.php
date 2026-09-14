@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('business_id')->constrained('users')->cascadeOnDelete();
             $table->foreignId('customer_id')->constrained('users')->cascadeOnDelete();
+            $table->foreignId('project_id')->nullable()->constrained('projects')->nullOnDelete();
+            $table->foreignId('quote_request_id')->nullable()->constrained('quote_requests')->nullOnDelete();
             $table->timestamp('last_message_at')->nullable();
             $table->timestamps();
 

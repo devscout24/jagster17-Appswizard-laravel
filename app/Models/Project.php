@@ -16,6 +16,9 @@ class Project extends Model
         'customer_id',
         'quote_request_id',
         'title',
+        'description',
+        'total_amount',
+        'start_date',
         'due_date',
         'progress_percent',
         'status',
@@ -24,7 +27,9 @@ class Project extends Model
     protected function casts(): array
     {
         return [
-            'due_date' => 'date',
+            'total_amount'     => 'decimal:2',
+            'start_date'       => 'date',
+            'due_date'         => 'date',
             'progress_percent' => 'integer',
         ];
     }

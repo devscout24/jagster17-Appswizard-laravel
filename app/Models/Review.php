@@ -16,12 +16,17 @@ class Review extends Model
         'project_id',
         'rating',
         'comment',
+        'contractor_reply',
+        'replied_at',
+        'is_featured',
     ];
 
     protected function casts(): array
     {
         return [
-            'rating' => 'integer',
+            'rating'      => 'integer',
+            'is_featured' => 'boolean',
+            'replied_at'  => 'datetime',
         ];
     }
 

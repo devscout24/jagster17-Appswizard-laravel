@@ -15,12 +15,14 @@ class Notification extends Model
         'type',
         'title',
         'body',
+        'data',
         'read_at',
     ];
 
     protected function casts(): array
     {
         return [
+            'data'    => 'array',
             'read_at' => 'datetime',
         ];
     }

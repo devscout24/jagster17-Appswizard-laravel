@@ -34,7 +34,7 @@ return new class extends Migration
             $table->decimal('tax_cost', 10, 2)->nullable();
             $table->string('estimated_duration')->nullable();
             $table->text('contractor_notes')->nullable();
-            $table->enum('status', ['new', 'pending', 'accepted', 'rejected'])->default('new');
+            $table->enum('status', ['new', 'pending', 'quoted', 'accepted', 'declined', 'rejected', 'expired'])->default('new');
             $table->timestamp('requested_at')->useCurrent();
             $table->timestamps();
 

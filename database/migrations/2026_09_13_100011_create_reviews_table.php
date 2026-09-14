@@ -18,6 +18,9 @@ return new class extends Migration
             $table->foreignId('project_id')->nullable()->constrained('projects')->nullOnDelete();
             $table->unsignedTinyInteger('rating');
             $table->text('comment')->nullable();
+            $table->text('contractor_reply')->nullable();
+            $table->timestamp('replied_at')->nullable();
+            $table->boolean('is_featured')->default(false);
             $table->timestamps();
 
             $table->index(['business_id', 'rating']);

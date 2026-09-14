@@ -247,7 +247,7 @@ class CustomerPortalController extends Controller
     /**
      * Settle & pay an invoice.
      */
-    public function payInvoice(int $id): JsonResponse
+    public function payInvoice(Request $request, int $id): JsonResponse
     {
         $user = $this->resolveCustomerUser();
 
@@ -276,11 +276,26 @@ class CustomerPortalController extends Controller
             'business_id' => $invoice->business_id,
             'transaction_id' => $transactionId,
             'amount' => $invoice->amount,
-            'payment_method' => 'Stripe',
+            'payment_method' => $request->input('payment_method', 'Credit Card'),
             'status' => 'paid',
             'receipt_url' => '/receipts/'.$transactionId.'.pdf',
             'paid_at' => now(),
         ]);
+
+        if ($invoice->business_id) {
+            \App\Models\Notification::create([
+                'user_id' => $invoice->business_id,
+                'title'   => 'Invoice Paid!',
+                'body'    => ($user->name) . " paid invoice {$invoice->invoice_number} of $" . number_format((float) $invoice->amount, 2) . ".",
+                'type'    => 'invoice_paid',
+                'data'    => [
+                    'invoice_id'     => $invoice->id,
+                    'invoice_number' => $invoice->invoice_number,
+                    'amount'         => (float) $invoice->amount,
+                    'transaction_id' => $transactionId,
+                ],
+            ]);
+        }
 
         return $this->success(
             new CustomerInvoiceResource($invoice->load(['business.businessProfile', 'project'])),

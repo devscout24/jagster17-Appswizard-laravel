@@ -14,6 +14,8 @@ class Conversation extends Model
     protected $fillable = [
         'business_id',
         'customer_id',
+        'project_id',
+        'quote_request_id',
         'last_message_at',
     ];
 
@@ -32,6 +34,16 @@ class Conversation extends Model
     public function customer(): BelongsTo
     {
         return $this->belongsTo(User::class, 'customer_id');
+    }
+
+    public function project(): BelongsTo
+    {
+        return $this->belongsTo(Project::class, 'project_id');
+    }
+
+    public function quoteRequest(): BelongsTo
+    {
+        return $this->belongsTo(QuoteRequest::class, 'quote_request_id');
     }
 
     public function messages(): HasMany
