@@ -1,0 +1,464 @@
+/**
+ * ValorHub / JAGSTAR Platform Brand Stylesheet
+ * Brand Colors:
+ * - Red:  #BE1E2D (RGB: 190, 30, 45)
+ * - Blue: #262262 (RGB: 38, 34, 98)
+ *
+ * Sidebar Gradient: linear-gradient(180deg, #262262 0%, #BE1E2D 100%)
+ */
+
+:root,
+html,
+body,
+[data-bs-theme="light"],
+[data-bs-theme="dark"] {
+    /* Brand Colors */
+    --brand-red: #BE1E2D;
+    --brand-red-rgb: 190, 30, 45;
+    --brand-blue: #262262;
+    --brand-blue-rgb: 38, 34, 98;
+    --brand-blue-dark: #1b1847;
+    --brand-red-dark: #9e1825;
+    --brand-red-light: #fdf2f3;
+    --brand-blue-light: #f0eff8;
+
+    /* Theme Primary Color -> Brand Red (#BE1E2D) */
+    --theme-primary: #BE1E2D;
+    --theme-primary-rgb: 190, 30, 45;
+    --theme-primary-hover: #9e1825;
+    --theme-primary-active: #82131e;
+    --theme-primary-bg-subtle: rgba(190, 30, 45, 0.1);
+    --theme-primary-border-subtle: rgba(190, 30, 45, 0.25);
+    --theme-primary-text-emphasis: #9e1825;
+
+    /* Theme Secondary Color -> Brand Blue (#262262) */
+    --theme-secondary: #262262;
+    --theme-secondary-rgb: 38, 34, 98;
+    --theme-secondary-hover: #1b1847;
+    --theme-secondary-active: #131133;
+    --theme-secondary-bg-subtle: rgba(38, 34, 98, 0.08);
+    --theme-secondary-border-subtle: rgba(38, 34, 98, 0.2);
+    --theme-secondary-text-emphasis: #262262;
+
+    /* Native Bootstrap Variables */
+    --bs-primary: #BE1E2D;
+    --bs-primary-rgb: 190, 30, 45;
+    --bs-secondary: #262262;
+    --bs-secondary-rgb: 38, 34, 98;
+    --bs-link-color: #262262;
+    --bs-link-hover-color: #BE1E2D;
+    --bs-focus-ring-color: rgba(190, 30, 45, 0.25);
+
+    /* Chart & Accent Palette */
+    --theme-chart-primary: #BE1E2D;
+    --theme-chart-primary-rgb: 190, 30, 45;
+    --theme-chart-secondary: #262262;
+    --theme-chart-secondary-rgb: 38, 34, 98;
+    --theme-chart-alpha: #BE1E2D;
+    --theme-chart-beta: #262262;
+
+    /* Sidenav Overrides */
+    --theme-sidenav-bg: linear-gradient(180deg, #262262 0%, #BE1E2D 100%);
+    --theme-sidenav-item-color: rgba(255, 255, 255, 0.9);
+    --theme-sidenav-item-hover-color: #ffffff;
+    --theme-sidenav-item-hover-bg: rgba(255, 255, 255, 0.12);
+    --theme-sidenav-item-active-color: #ffffff;
+    --theme-sidenav-item-active-bg: rgba(255, 255, 255, 0.22);
+}
+
+/* ==========================================================================
+   1. Sidenav / Sidebar (Blue-to-Red Vertical Gradient & White Nav Elements)
+   ========================================================================== */
+
+.sidenav-menu {
+    background: linear-gradient(180deg, #262262 0%, #BE1E2D 100%) !important;
+    border-right: none !important;
+    box-shadow: 2px 0 16px rgba(38, 34, 98, 0.2) !important;
+}
+
+/* Sidebar Logo */
+.sidenav-menu .logo {
+    background: transparent !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.sidenav-menu .logo img.sidebar-brand-logo {
+    filter: brightness(0) invert(1);
+    max-height: 34px;
+    width: auto;
+    object-fit: contain;
+}
+
+/* Sidebar User Section */
+.sidenav-menu .sidenav-user {
+    background: rgba(255, 255, 255, 0.08) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    color: #ffffff !important;
+}
+
+.sidenav-menu .sidenav-user .sidenav-user-name {
+    color: #ffffff !important;
+}
+
+.sidenav-menu .sidenav-user .text-muted,
+.sidenav-menu .sidenav-user small {
+    color: rgba(255, 255, 255, 0.75) !important;
+}
+
+.sidenav-menu .button-on-hover,
+.sidenav-menu .button-close-offcanvas,
+.sidenav-menu .sidenav-user-set-icon {
+    color: rgba(255, 255, 255, 0.85) !important;
+}
+
+/* Sidenav Titles */
+.sidenav-menu .side-nav-title {
+    color: rgba(255, 255, 255, 0.6) !important;
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-weight: 700;
+    padding: 10px 18px 4px !important;
+}
+
+/* Sidenav Links & Icons */
+.sidenav-menu .side-nav-link {
+    color: rgba(255, 255, 255, 0.9) !important;
+    border-radius: 8px;
+    margin: 2px 10px;
+    font-weight: 500;
+    transition: all 0.2s ease-in-out;
+}
+
+.sidenav-menu .side-nav-link .menu-icon,
+.sidenav-menu .side-nav-link .menu-icon i {
+    color: #ffffff !important;
+    background-color: transparent !important;
+}
+
+.sidenav-menu .side-nav-link .menu-arrow {
+    color: rgba(255, 255, 255, 0.7) !important;
+}
+
+/* Sidenav Hover state: subtle translucent white */
+.sidenav-menu .side-nav-link:hover {
+    color: #ffffff !important;
+    background-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+.sidenav-menu .side-nav-link:hover .menu-icon,
+.sidenav-menu .side-nav-link:hover .menu-icon i,
+.sidenav-menu .side-nav-link:hover .menu-arrow {
+    color: #ffffff !important;
+}
+
+/* Sidenav Active state: more visible translucent white with accent indicator */
+.sidenav-menu .side-nav-item.active>.side-nav-link,
+.sidenav-menu .side-nav-link.active {
+    color: #ffffff !important;
+    background-color: rgba(255, 255, 255, 0.22) !important;
+    font-weight: 600;
+    position: relative;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+}
+
+.sidenav-menu .side-nav-item.active>.side-nav-link::before,
+.sidenav-menu .side-nav-link.active::before {
+    content: '';
+    position: absolute;
+    left: -4px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 4px;
+    height: 55%;
+    background-color: #ffffff;
+    border-radius: 4px;
+    box-shadow: 0 0 6px rgba(255, 255, 255, 0.9);
+}
+
+/* Sidenav Submenus */
+.sidenav-menu .sub-menu {
+    background-color: rgba(0, 0, 0, 0.15) !important;
+    border-radius: 8px;
+    margin: 4px 10px;
+    padding: 6px 0;
+}
+
+.sidenav-menu .sub-menu .side-nav-link {
+    margin: 1px 8px;
+    color: rgba(255, 255, 255, 0.82) !important;
+}
+
+.sidenav-menu .sub-menu .side-nav-link:hover {
+    color: #ffffff !important;
+    background-color: rgba(255, 255, 255, 0.15) !important;
+}
+
+.sidenav-menu .sub-menu .side-nav-item.active>.side-nav-link,
+.sidenav-menu .sub-menu .side-nav-link.active {
+    color: #ffffff !important;
+    background-color: rgba(255, 255, 255, 0.25) !important;
+}
+
+/* ==========================================================================
+   2. Topbar & Header
+   ========================================================================== */
+
+.app-topbar {
+    background-color: #ffffff !important;
+    border-bottom: 1px solid #edf0f5 !important;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03);
+}
+
+.logo-topbar img {
+    max-height: 32px;
+    width: auto;
+    object-fit: contain;
+}
+
+.topbar-search:focus {
+    border-color: #BE1E2D !important;
+    box-shadow: 0 0 0 0.2rem rgba(190, 30, 45, 0.15) !important;
+}
+
+/* ==========================================================================
+   3. Main Content Background & Clean Containers
+   ========================================================================== */
+
+.content-page {
+    background-color: #f7f8fc !important;
+    min-height: 100vh;
+}
+
+.card {
+    background-color: #ffffff !important;
+    border: 1px solid rgba(0, 0, 0, 0.06) !important;
+    box-shadow: 0 2px 8px rgba(38, 34, 98, 0.04) !important;
+    border-radius: 10px;
+}
+
+.card-header {
+    background-color: transparent !important;
+    border-bottom: 1px solid #edf0f5 !important;
+}
+
+.table {
+    --bs-table-bg: transparent;
+}
+
+.table th {
+    color: #262262 !important;
+    font-weight: 600;
+    font-size: 0.8rem;
+    letter-spacing: 0.02em;
+    border-bottom-color: #e5e8ef !important;
+}
+
+/* ==========================================================================
+   4. Buttons & Interactive Controls (Red Primary, Blue Secondary)
+   ========================================================================== */
+
+/* Primary Buttons: Red #BE1E2D */
+.btn-primary {
+    background-color: #BE1E2D !important;
+    border-color: #BE1E2D !important;
+    color: #ffffff !important;
+    box-shadow: 0 2px 6px rgba(190, 30, 45, 0.25);
+    transition: all 0.2s ease-in-out;
+}
+
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active,
+.btn-primary.active {
+    background-color: #9e1825 !important;
+    border-color: #9e1825 !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 10px rgba(190, 30, 45, 0.35) !important;
+}
+
+.btn-outline-primary {
+    color: #BE1E2D !important;
+    border-color: #BE1E2D !important;
+}
+
+.btn-outline-primary:hover,
+.btn-outline-primary:active,
+.btn-outline-primary.active {
+    background-color: #BE1E2D !important;
+    border-color: #BE1E2D !important;
+    color: #ffffff !important;
+}
+
+.btn-soft-primary {
+    background-color: rgba(190, 30, 45, 0.1) !important;
+    color: #BE1E2D !important;
+    border: none;
+}
+
+.btn-soft-primary:hover {
+    background-color: #BE1E2D !important;
+    color: #ffffff !important;
+}
+
+/* Secondary Buttons: Blue #262262 */
+.btn-secondary {
+    background-color: #262262 !important;
+    border-color: #262262 !important;
+    color: #ffffff !important;
+    box-shadow: 0 2px 6px rgba(38, 34, 98, 0.25);
+    transition: all 0.2s ease-in-out;
+}
+
+.btn-secondary:hover,
+.btn-secondary:focus,
+.btn-secondary:active,
+.btn-secondary.active {
+    background-color: #1b1847 !important;
+    border-color: #1b1847 !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 10px rgba(38, 34, 98, 0.35) !important;
+}
+
+.btn-outline-secondary {
+    color: #262262 !important;
+    border-color: #262262 !important;
+}
+
+.btn-outline-secondary:hover,
+.btn-outline-secondary:active,
+.btn-outline-secondary.active {
+    background-color: #262262 !important;
+    border-color: #262262 !important;
+    color: #ffffff !important;
+}
+
+.btn-soft-secondary {
+    background-color: rgba(38, 34, 98, 0.08) !important;
+    color: #262262 !important;
+    border: none;
+}
+
+.btn-soft-secondary:hover {
+    background-color: #262262 !important;
+    color: #ffffff !important;
+}
+
+/* ==========================================================================
+   5. Links, Typography, and Badges
+   ========================================================================== */
+
+a {
+    color: #262262;
+    transition: color 0.15s ease;
+}
+
+a:hover {
+    color: #BE1E2D;
+}
+
+.text-primary {
+    color: #BE1E2D !important;
+}
+
+.text-secondary {
+    color: #262262 !important;
+}
+
+.bg-primary {
+    background-color: #BE1E2D !important;
+}
+
+.bg-secondary {
+    background-color: #262262 !important;
+}
+
+.bg-primary-subtle {
+    background-color: rgba(190, 30, 45, 0.1) !important;
+    color: #BE1E2D !important;
+}
+
+.bg-secondary-subtle {
+    background-color: rgba(38, 34, 98, 0.08) !important;
+    color: #262262 !important;
+}
+
+.badge.bg-primary {
+    background-color: #BE1E2D !important;
+    color: #ffffff !important;
+}
+
+.badge.bg-secondary {
+    background-color: #262262 !important;
+    color: #ffffff !important;
+}
+
+/* ==========================================================================
+   6. Forms, Inputs & Focus States
+   ========================================================================== */
+
+.form-control:focus,
+.form-select:focus {
+    border-color: #BE1E2D !important;
+    box-shadow: 0 0 0 0.2rem rgba(190, 30, 45, 0.18) !important;
+}
+
+.form-check-input:checked {
+    background-color: #BE1E2D !important;
+    border-color: #BE1E2D !important;
+}
+
+.form-check-input:focus {
+    border-color: #BE1E2D !important;
+    box-shadow: 0 0 0 0.2rem rgba(190, 30, 45, 0.2) !important;
+}
+
+/* ==========================================================================
+   7. Navigation Tabs & Pagination
+   ========================================================================== */
+
+.nav-tabs .nav-link.active,
+.nav-pills .nav-link.active {
+    background-color: #BE1E2D !important;
+    color: #ffffff !important;
+    border-color: #BE1E2D !important;
+}
+
+.nav-tabs .nav-link {
+    color: #262262;
+    font-weight: 500;
+}
+
+.nav-tabs .nav-link:hover {
+    color: #BE1E2D;
+}
+
+.page-item.active .page-link {
+    background-color: #BE1E2D !important;
+    border-color: #BE1E2D !important;
+    color: #ffffff !important;
+}
+
+.page-link {
+    color: #262262;
+}
+
+.page-link:hover {
+    color: #BE1E2D;
+}
+
+/* ==========================================================================
+   8. Login / Auth Page Branding
+   ========================================================================== */
+
+.auth-brand img {
+    max-height: 52px;
+    width: auto;
+    object-fit: contain;
+}
+
+.auth-box .card {
+    border-radius: 12px;
+    border: 1px solid rgba(38, 34, 98, 0.08) !important;
+    box-shadow: 0 8px 30px rgba(38, 34, 98, 0.08) !important;
+}
