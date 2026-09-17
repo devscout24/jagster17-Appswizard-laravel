@@ -19,13 +19,8 @@ use App\Http\Controllers\Admin\SubscriptionPlanController;
 use App\Http\Controllers\Admin\VeteranNominationController;
 use Illuminate\Support\Facades\Route;
 
-// Root route
+// Redirect root to admin dashboard or login
 Route::get('/', function () {
-    return view('welcome');
-});
-
-// Admin root redirect
-Route::get('/admin', function () {
     return redirect()->route('admin.dashboard');
 });
 
