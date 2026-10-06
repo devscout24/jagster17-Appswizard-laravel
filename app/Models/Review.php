@@ -44,4 +44,24 @@ class Review extends Model
     {
         return $this->belongsTo(Project::class, 'project_id');
     }
+
+    /**
+     * Keep the contractor's cached rating and review count in sync.
+     */
+    protected static function booted(): void
+    {
+        $refresh = function (Review $review) {
+            $stats = static::where('business_id', $review->business_id)
+                ->selectRaw('AVG(rating) as average, COUNT(*) as total')
+                ->first();
+
+            BusinessProfile::where('user_id', $review->business_id)->update([
+                'avg_rating' => round((float) $stats->average, 2),
+                'review_count' => (int) $stats->total,
+            ]);
+        };
+
+        static::saved($refresh);
+        static::deleted($refresh);
+    }
 }

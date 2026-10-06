@@ -55,6 +55,11 @@ return [
     'url' => env('APP_URL', 'http://localhost'),
 
     /*
+    | Public website (React app). Used for links in emails such as password resets.
+    */
+    'frontend_url' => env('FRONTEND_URL', 'http://localhost:5173'),
+
+    /*
     |--------------------------------------------------------------------------
     | Application Timezone
     |--------------------------------------------------------------------------

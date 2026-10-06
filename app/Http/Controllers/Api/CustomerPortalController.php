@@ -334,7 +334,6 @@ class CustomerPortalController extends Controller
         $user = $this->resolveCustomerUser();
 
         // If no saved contractors exist yet, auto-populate with active contractors for demo experience
-        $this->ensureSavedContractorsSeed($user);
 
         $saved = \App\Models\SavedContractor::where('user_id', $user->id)
             ->with(['business.businessProfile', 'business.services.category'])
@@ -420,39 +419,12 @@ class CustomerPortalController extends Controller
     }
 
     /**
-     * Helper to seed demo bookmarks if empty.
-     */
-    private function ensureSavedContractorsSeed(User $user): void
-    {
-        $count = \App\Models\SavedContractor::where('user_id', $user->id)->count();
-        if ($count === 0) {
-            $contractors = User::whereHas('businessProfile')->take(6)->get();
-            foreach ($contractors as $contractor) {
-                \App\Models\SavedContractor::firstOrCreate([
-                    'user_id' => $user->id,
-                    'business_id' => $contractor->id,
-                ]);
-            }
-        }
-    }
-
-    /**
-     * Private helper to resolve customer user (authenticated or fallback demo).
+     * Resolve the authenticated customer.
      */
     private function resolveCustomerUser(): User
     {
-        $user = auth('api')->user();
-        if (!$user) {
-            $user = User::whereHas('customerProfile')->first();
-            if (!$user) {
-                $user = User::firstOrCreate(
-                    ['email' => 'customer.demo@valorhub.test'],
-                    ['name' => 'Sarah Jenkins', 'password' => bcrypt('secret123'), 'status' => 'active']
-                );
-            }
-        }
-
-        return $user;
+        // Routes are guarded by auth:api + role:customer
+        return auth('api')->user();
     }
 }
 

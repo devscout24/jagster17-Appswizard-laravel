@@ -49,6 +49,19 @@ class BusinessProfile extends Model
         'terms_accepted_at',
         'id_me_verified_at',
         'id_me_data',
+        'slug',
+        'logo',
+        'tagline',
+        'business_category',
+        'business_email',
+        'street_address',
+        'insurance_company',
+        'insurance_policy_number',
+        'offers_emergency_service',
+        'custom_domain',
+        'youtube_url',
+        'tiktok_url',
+        'invoice_title',
     ];
 
     protected function casts(): array
@@ -74,6 +87,7 @@ class BusinessProfile extends Model
             'terms_accepted_at'    => 'datetime',
             'id_me_verified_at'    => 'datetime',
             'id_me_data'           => 'array',
+            'offers_emergency_service' => 'boolean',
         ];
     }
 

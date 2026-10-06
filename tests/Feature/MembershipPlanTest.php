@@ -119,6 +119,7 @@ class MembershipPlanTest extends TestCase
     public function test_validation_error_when_selecting_invalid_plan(): void
     {
         $user = User::factory()->create();
+        $user->assignRole(Role::findOrCreate('business', 'api'));
         $token = auth('api')->login($user);
 
         $response = $this->withHeader('Authorization', 'Bearer ' . $token)

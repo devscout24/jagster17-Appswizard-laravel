@@ -2,20 +2,25 @@
 
 use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\Admin\AuthController;
+use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\ContactMessageController;
 use App\Http\Controllers\Admin\ContractorController;
 use App\Http\Controllers\Admin\CustomerController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\FaqController;
+use App\Http\Controllers\Admin\GalleryPhotoController;
 use App\Http\Controllers\Admin\InvoiceController;
+use App\Http\Controllers\Admin\PageController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\ProjectController;
 use App\Http\Controllers\Admin\QuoteRequestController;
 use App\Http\Controllers\Admin\ReviewController;
 use App\Http\Controllers\Admin\ServiceController;
+use App\Http\Controllers\Admin\SiteSettingController;
 use App\Http\Controllers\Admin\SubscriptionPlanController;
+use App\Http\Controllers\Admin\VerificationController;
 use App\Http\Controllers\Admin\VeteranNominationController;
 use Illuminate\Support\Facades\Route;
 
@@ -47,6 +52,16 @@ Route::prefix('admin')->name('admin.')->middleware(['web', 'admin.auth'])->group
     // Contractors & Businesses
     Route::resource('contractors', ContractorController::class);
     Route::post('contractors/{id}/toggle-badge', [ContractorController::class, 'toggleBadge'])->name('contractors.toggle-badge');
+
+    // Contractor verification, banners & gallery moderation
+    Route::get('verifications', [VerificationController::class, 'index'])->name('verifications.index');
+    Route::put('verifications/{document}', [VerificationController::class, 'update'])->name('verifications.update');
+    Route::get('banners', [BannerController::class, 'index'])->name('banners.index');
+    Route::put('banners/{banner}', [BannerController::class, 'update'])->name('banners.update');
+    Route::delete('banners/{banner}', [BannerController::class, 'destroy'])->name('banners.destroy');
+    Route::get('gallery', [GalleryPhotoController::class, 'index'])->name('gallery.index');
+    Route::post('gallery/{photo}/toggle', [GalleryPhotoController::class, 'toggle'])->name('gallery.toggle');
+    Route::delete('gallery/{photo}', [GalleryPhotoController::class, 'destroy'])->name('gallery.destroy');
 
     // Customers
     Route::resource('customers', CustomerController::class);
@@ -90,6 +105,11 @@ Route::prefix('admin')->name('admin.')->middleware(['web', 'admin.auth'])->group
 
     // FAQs
     Route::resource('faqs', FaqController::class)->except(['show']);
+
+    // Website content
+    Route::resource('pages', PageController::class)->except(['show']);
+    Route::get('settings', [SiteSettingController::class, 'edit'])->name('settings.edit');
+    Route::put('settings', [SiteSettingController::class, 'update'])->name('settings.update');
 
     // Admin Users Management (Super Admin only access via policy/role if required)
     Route::resource('users', AdminUserController::class)->except(['show']);

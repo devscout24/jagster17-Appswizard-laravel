@@ -26,13 +26,7 @@ class MessageController extends Controller
      */
     protected function resolveUser(): User
     {
-        $user = auth('api')->user();
-
-        if (! $user) {
-            $user = User::first();
-        }
-
-        return $user;
+        return auth('api')->user();
     }
 
     /**

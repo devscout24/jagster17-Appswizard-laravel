@@ -9,6 +9,7 @@ use App\Models\SavedContractor;
 use App\Models\Service;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Spatie\Permission\Models\Role;
 use Tests\TestCase;
 
 class CustomerSavedContractorsTest extends TestCase
@@ -27,6 +28,7 @@ class CustomerSavedContractorsTest extends TestCase
             'name' => 'Jane Customer',
             'email' => 'jane@example.com',
         ]);
+        $this->customer->assignRole(Role::findOrCreate('customer', 'api'));
         CustomerProfile::create([
             'user_id' => $this->customer->id,
             'city' => 'Phoenix',
