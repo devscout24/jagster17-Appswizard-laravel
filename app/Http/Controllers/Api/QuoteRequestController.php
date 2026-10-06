@@ -6,12 +6,16 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\QuoteRequest\StoreQuoteRequestRequest;
 use App\Http\Resources\QuoteRequestResource;
 use App\Models\Category;
+use App\Models\CustomerProfile;
 use App\Models\QuoteRequest;
 use App\Models\User;
 use App\Traits\ApiResponseTrait;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
+use Spatie\Permission\Models\Role;
 
 class QuoteRequestController extends Controller
 {
@@ -73,13 +77,10 @@ class QuoteRequestController extends Controller
      */
     public function store(StoreQuoteRequestRequest $request): JsonResponse
     {
-        $user = auth('api')->user();
-        if (!$user) {
-            // Find or create demo/guest customer user
-            $user = User::firstOrCreate(
-                ['email' => 'guest.customer@valorhub.test'],
-                ['name' => 'Homeowner Customer', 'password' => bcrypt(Str::random(16)), 'status' => 'active']
-            );
+        $user = auth('api')->user() ?? $this->resolveGuestCustomer($request);
+
+        if (! $user) {
+            throw ValidationException::withMessages(['email' => ['An account with this email already exists. Please log in to request a quote.']]);
         }
 
         $businessId = $request->validated('contractor_id') ?? $request->validated('business_id');
@@ -131,11 +132,12 @@ class QuoteRequestController extends Controller
         $userId = auth('api')->id();
         $status = $request->query('status');
 
+        // Only the customer who asked, or the contractor asked, can see a quote request
         $query = QuoteRequest::query()
             ->with(['business.businessProfile', 'category', 'customer'])
-            ->when($userId, function ($q) use ($userId) {
+            ->where(function ($q) use ($userId) {
                 $q->where('customer_id', $userId)
-                  ->orWhere('business_id', $userId);
+                    ->orWhere('business_id', $userId);
             })
             ->when($status, fn ($q) => $q->where('status', $status))
             ->latest('requested_at');
@@ -158,7 +160,10 @@ class QuoteRequestController extends Controller
      */
     public function show(int $id): JsonResponse
     {
-        $quoteRequest = QuoteRequest::with(['business.businessProfile', 'category', 'customer.customerProfile'])->find($id);
+        $userId = auth('api')->id();
+        $quoteRequest = QuoteRequest::with(['business.businessProfile', 'category', 'customer.customerProfile'])
+            ->where(fn ($q) => $q->where('customer_id', $userId)->orWhere('business_id', $userId))
+            ->find($id);
 
         if (!$quoteRequest) {
             return $this->notFound('Quote request not found');
@@ -200,5 +205,41 @@ class QuoteRequestController extends Controller
             ['key' => 'contracting', 'name' => 'Contracting', 'icon' => 'contracting-icon', 'category_id' => 7],
             ['key' => 'other', 'name' => 'Other', 'icon' => 'cube-icon', 'category_id' => 8],
         ];
+    }
+
+    /**
+     * Guests get a passwordless "pending" customer account keyed by email, which they can
+     * claim later by registering. Returns null if the email belongs to a real account.
+     */
+    private function resolveGuestCustomer(StoreQuoteRequestRequest $request): ?User
+    {
+        $email = strtolower($request->validated('email'));
+        $user = User::where('email', $email)->first();
+
+        if ($user) {
+            $isGuest = $user->status === 'pending'
+                && $user->hasRole('customer')
+                && ! $user->businessProfile()->exists();
+
+            return $isGuest ? $user : null;
+        }
+
+        Role::findOrCreate('customer', 'api');
+
+        $user = User::create([
+            'name' => $request->validated('name'),
+            'email' => $email,
+            'phone' => $request->validated('phone'),
+            'password' => Hash::make(Str::random(40)),
+            'status' => 'pending',
+        ]);
+        $user->assignRole('customer');
+        CustomerProfile::create([
+            'user_id' => $user->id,
+            'city' => $request->validated('city'),
+            'state' => $request->validated('state'),
+        ]);
+
+        return $user;
     }
 }

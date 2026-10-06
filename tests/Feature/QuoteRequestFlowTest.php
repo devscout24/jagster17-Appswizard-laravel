@@ -7,6 +7,7 @@ use App\Models\Category;
 use App\Models\QuoteRequest;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Spatie\Permission\Models\Role;
 use Tests\TestCase;
 
 class QuoteRequestFlowTest extends TestCase
@@ -93,6 +94,8 @@ class QuoteRequestFlowTest extends TestCase
             'status' => 'active',
         ]);
 
+        $customer->assignRole(Role::findOrCreate('customer', 'api'));
+
         $payload = [
             'category_id' => $category->id,
             'contractor_id' => $contractor->id,
@@ -178,6 +181,7 @@ class QuoteRequestFlowTest extends TestCase
             'password' => 'secret123',
             'status' => 'active',
         ]);
+        $customer->assignRole(Role::findOrCreate('customer', 'api'));
 
         $quote = QuoteRequest::create([
             'reference_number' => 'VH-20260727-042',
@@ -194,7 +198,7 @@ class QuoteRequestFlowTest extends TestCase
             'requested_at' => now(),
         ]);
 
-        $response = $this->getJson('/api/quotes/'.$quote->id);
+        $response = $this->actingAs($customer, 'api')->getJson('/api/quotes/'.$quote->id);
 
         $response->assertStatus(200)
             ->assertJsonPath('status', true)

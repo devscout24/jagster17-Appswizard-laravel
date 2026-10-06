@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Contractor\CreateInvoiceRequest;
 use App\Http\Requests\Contractor\CreateProjectRequest;
 use App\Http\Requests\Contractor\ReplyReviewRequest;
 use App\Http\Requests\Contractor\SendQuoteRequest;
@@ -35,16 +34,8 @@ class ContractorPortalController extends Controller
      */
     protected function resolveContractor(): User
     {
-        $user = auth('api')->user();
-
-        if (! $user) {
-            // Fallback for demonstration / seed testing if unauthenticated
-            $user = User::whereHas('roles', fn ($q) => $q->where('name', 'business'))
-                ->with(['businessProfile', 'subscription.plan'])
-                ->first() ?? User::first();
-        }
-
-        return $user;
+        // Routes are guarded by auth:api + role:business
+        return auth('api')->user()->loadMissing(['businessProfile', 'subscription.plan']);
     }
 
     /**
@@ -500,71 +491,6 @@ class ContractorPortalController extends Controller
         );
     }
 
-    /**
-     * Create & Send Invoice (Node 3354-11).
-     */
-    public function createInvoice(CreateInvoiceRequest $request): JsonResponse
-    {
-        $user = $this->resolveContractor();
-        $validated = $request->validated();
-
-        $customerId = $validated['customer_id'] ?? null;
-        $project = null;
-
-        if (! empty($validated['project_id'])) {
-            $project = Project::where('business_id', $user->id)->find($validated['project_id']);
-            if ($project) {
-                $customerId = $project->customer_id;
-            }
-        }
-
-        if (! $customerId) {
-            return $this->error('Please specify a client for this invoice.', 422);
-        }
-
-        $invoiceNumber = ! empty($validated['invoice_number'])
-            ? $validated['invoice_number']
-            : 'INV-' . now()->format('Ymd') . '-' . str_pad((string) mt_rand(1, 999), 3, '0', STR_PAD_LEFT);
-
-        $sendImmediately = $validated['send_immediately'] ?? true;
-        $status = $sendImmediately ? 'pending' : 'draft';
-
-        $invoice = Invoice::create([
-            'business_id'      => $user->id,
-            'customer_id'      => $customerId,
-            'project_id'       => $validated['project_id'] ?? null,
-            'invoice_number'   => $invoiceNumber,
-            'amount'           => $validated['amount'],
-            'labor_amount'     => $validated['labor_amount'] ?? null,
-            'materials_amount' => $validated['materials_amount'] ?? null,
-            'platform_fee'     => $validated['platform_fee'] ?? null,
-            'notes'            => $validated['notes'] ?? null,
-            'issued_at'        => $validated['issued_at'] ?? now(),
-            'due_at'           => $validated['due_at'],
-            'status'           => $status,
-        ]);
-
-        // If sent to customer, create notification
-        if ($sendImmediately && $customerId) {
-            Notification::create([
-                'user_id' => $customerId,
-                'title'   => 'New Invoice Issued',
-                'body'    => ($user->businessProfile?->business_name ?? $user->name) . " issued invoice {$invoice->invoice_number} for $" . number_format((float) $invoice->amount, 2) . ".",
-                'type'    => 'invoice_issued',
-                'data'    => [
-                    'invoice_id'     => $invoice->id,
-                    'invoice_number' => $invoice->invoice_number,
-                    'amount'         => (float) $invoice->amount,
-                ],
-            ]);
-        }
-
-        return $this->success(
-            new ContractorInvoiceResource($invoice->load(['customer', 'project'])),
-            $sendImmediately ? 'Invoice sent to client successfully.' : 'Invoice draft saved successfully.',
-            201
-        );
-    }
 
     /**
      * Analytics & Performance statistics.

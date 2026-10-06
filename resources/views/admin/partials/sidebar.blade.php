@@ -108,6 +108,43 @@
                     </a>
                 </li>
 
+                @php
+                    $pendingDocuments = \App\Models\BusinessDocument::where('status', 'pending')->count();
+                    $pendingBanners = \App\Models\Banner::where('status', 'pending')->count();
+                @endphp
+
+                <li class="side-nav-title mt-2">Contractor Content</li>
+
+                <!-- Verification Queue -->
+                <li class="side-nav-item {{ request()->routeIs('admin.verifications.*') ? 'active' : '' }}">
+                    <a href="{{ route('admin.verifications.index') }}" class="side-nav-link">
+                        <span class="menu-icon"><i class="ti ti-shield-check"></i></span>
+                        <span class="menu-text">Verification Queue</span>
+                        @if ($pendingDocuments)
+                            <span class="badge bg-danger rounded-pill ms-auto">{{ $pendingDocuments }}</span>
+                        @endif
+                    </a>
+                </li>
+
+                <!-- Homepage Banners -->
+                <li class="side-nav-item {{ request()->routeIs('admin.banners.*') ? 'active' : '' }}">
+                    <a href="{{ route('admin.banners.index') }}" class="side-nav-link">
+                        <span class="menu-icon"><i class="ti ti-layout-navbar"></i></span>
+                        <span class="menu-text">Homepage Banners</span>
+                        @if ($pendingBanners)
+                            <span class="badge bg-danger rounded-pill ms-auto">{{ $pendingBanners }}</span>
+                        @endif
+                    </a>
+                </li>
+
+                <!-- Gallery Moderation -->
+                <li class="side-nav-item {{ request()->routeIs('admin.gallery.*') ? 'active' : '' }}">
+                    <a href="{{ route('admin.gallery.index') }}" class="side-nav-link">
+                        <span class="menu-icon"><i class="ti ti-photo"></i></span>
+                        <span class="menu-text">Gallery Moderation</span>
+                    </a>
+                </li>
+
                 <li class="side-nav-title mt-2">Leads & Operations</li>
 
                 <!-- Quote Requests -->
@@ -212,6 +249,22 @@
                 </li>
 
                 <li class="side-nav-title mt-2">System</li>
+
+                <!-- Website Pages -->
+                <li class="side-nav-item {{ request()->routeIs('admin.pages.*') ? 'active' : '' }}">
+                    <a href="{{ route('admin.pages.index') }}" class="side-nav-link">
+                        <span class="menu-icon"><i class="ti ti-file-description"></i></span>
+                        <span class="menu-text">Website Pages</span>
+                    </a>
+                </li>
+
+                <!-- Site Settings -->
+                <li class="side-nav-item {{ request()->routeIs('admin.settings.*') ? 'active' : '' }}">
+                    <a href="{{ route('admin.settings.edit') }}" class="side-nav-link">
+                        <span class="menu-icon"><i class="ti ti-adjustments"></i></span>
+                        <span class="menu-text">Site Settings</span>
+                    </a>
+                </li>
 
                 <!-- Admin Users -->
                 <li class="side-nav-item {{ request()->routeIs('admin.users.*') ? 'active' : '' }}">

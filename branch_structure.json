@@ -1,0 +1,18 @@
+{
+  "default_branch": "main",
+  "branches": [
+    "MAHI",
+    "main",
+    "origin"
+  ],
+  "parent": {
+    "MAHI": "main",
+    "main": null,
+    "origin": "main"
+  },
+  "order": [
+    "main",
+    "MAHI",
+    "origin"
+  ]
+}

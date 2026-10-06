@@ -97,7 +97,7 @@
 </div>
 
 <!-- Pending Approvals & Alerts Banner -->
-@if($pendingNominationsCount > 0 || $pendingMessagesCount > 0 || $unverifiedLicensesCount > 0)
+@if($pendingNominationsCount > 0 || $pendingMessagesCount > 0 || $unverifiedLicensesCount > 0 || $pendingDocumentsCount > 0 || $pendingBannersCount > 0)
 <div class="card bg-primary-subtle border-0 mb-4 shadow-sm">
     <div class="card-body py-3">
         <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
@@ -111,6 +111,16 @@
                 </div>
             </div>
             <div class="d-flex flex-wrap gap-2">
+                @if($pendingDocumentsCount > 0)
+                    <a href="{{ route('admin.verifications.index') }}" class="btn btn-sm btn-primary shadow-sm">
+                        <i class="ti ti-shield-check me-1"></i> {{ $pendingDocumentsCount }} Documents to Verify
+                    </a>
+                @endif
+                @if($pendingBannersCount > 0)
+                    <a href="{{ route('admin.banners.index') }}" class="btn btn-sm btn-dark shadow-sm">
+                        <i class="ti ti-layout-navbar me-1"></i> {{ $pendingBannersCount }} Banners to Approve
+                    </a>
+                @endif
                 @if($pendingNominationsCount > 0)
                     <a href="{{ route('admin.veteran-nominations.index', ['status' => 'pending']) }}" class="btn btn-sm btn-danger shadow-sm">
                         <i class="ti ti-medal me-1"></i> {{ $pendingNominationsCount }} Veteran Grant Requests

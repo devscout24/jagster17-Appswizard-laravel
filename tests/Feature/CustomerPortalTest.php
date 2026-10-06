@@ -10,6 +10,7 @@ use App\Models\Project;
 use App\Models\QuoteRequest;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Spatie\Permission\Models\Role;
 use Tests\TestCase;
 
 class CustomerPortalTest extends TestCase
@@ -24,6 +25,7 @@ class CustomerPortalTest extends TestCase
             'password' => 'secret123',
             'status' => 'active',
         ]);
+        $customer->assignRole(Role::findOrCreate('customer', 'api'));
         CustomerProfile::create(['user_id' => $customer->id, 'city' => 'Austin', 'state' => 'TX']);
 
         $contractor = User::create([
@@ -104,6 +106,7 @@ class CustomerPortalTest extends TestCase
             'password' => 'secret123',
             'status' => 'active',
         ]);
+        $customer->assignRole(Role::findOrCreate('customer', 'api'));
 
         $contractor = User::create([
             'name' => 'Marcus Rivera',
@@ -169,6 +172,7 @@ class CustomerPortalTest extends TestCase
             'password' => 'secret123',
             'status' => 'active',
         ]);
+        $customer->assignRole(Role::findOrCreate('customer', 'api'));
 
         $contractor = User::create([
             'name' => 'Marcus Rivera',

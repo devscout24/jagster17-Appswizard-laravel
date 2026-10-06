@@ -41,6 +41,17 @@ class UpdateContractorProfileRequest extends FormRequest
             'instagram_url'    => ['sometimes', 'nullable', 'string', 'max:255'],
             'twitter_url'      => ['sometimes', 'nullable', 'string', 'max:255'],
             'cover_photo'      => ['sometimes', 'nullable', 'string', 'max:255'],
+            'business_category' => ['sometimes', 'nullable', 'in:Blue Collar,White Collar,Grey Collar,Gold Collar,Other'],
+            'business_email'   => ['sometimes', 'nullable', 'email', 'max:255'],
+            'street_address'   => ['sometimes', 'nullable', 'string', 'max:255'],
+            'tagline'          => ['sometimes', 'nullable', 'string', 'max:255'],
+            'insurance_company' => ['sometimes', 'nullable', 'string', 'max:255'],
+            'insurance_policy_number' => ['sometimes', 'nullable', 'string', 'max:100'],
+            'offers_emergency_service' => ['sometimes', 'boolean'],
+            'is_available_today' => ['sometimes', 'boolean'],
+            'invoice_title'    => ['sometimes', 'nullable', 'string', 'max:50'],
+            'youtube_url'      => ['sometimes', 'nullable', 'string', 'max:255'],
+            'tiktok_url'       => ['sometimes', 'nullable', 'string', 'max:255'],
         ];
     }
 }

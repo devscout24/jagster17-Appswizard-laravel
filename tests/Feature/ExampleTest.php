@@ -12,8 +12,9 @@ class ExampleTest extends TestCase
      */
     public function test_the_application_returns_a_successful_response(): void
     {
+        // The backend root sends visitors to the admin panel, which redirects guests to its login
         $response = $this->get('/');
 
-        $response->assertStatus(200);
+        $response->assertRedirect(route('admin.dashboard'));
     }
 }

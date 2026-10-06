@@ -15,11 +15,11 @@ class NotificationController extends Controller
     use ApiResponseTrait;
 
     /**
-     * Resolve authenticated user or fallback.
+     * Resolve the authenticated user.
      */
     protected function resolveUser(): User
     {
-        return auth('api')->user() ?? User::first();
+        return auth('api')->user();
     }
 
     /**

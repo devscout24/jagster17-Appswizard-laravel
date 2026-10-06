@@ -93,6 +93,8 @@ class DashboardController extends Controller
         $pendingNominationsCount = VeteranNomination::where('status', 'pending')->count();
         $pendingMessagesCount = ContactMessage::where('status', 'pending')->count();
         $unverifiedLicensesCount = BusinessProfile::where('is_license_verified', false)->count();
+        $pendingDocumentsCount = \App\Models\BusinessDocument::where('status', 'pending')->count();
+        $pendingBannersCount = \App\Models\Banner::where('status', 'pending')->count();
 
         return view('admin.dashboard', compact(
             'totalContractors',
@@ -114,7 +116,9 @@ class DashboardController extends Controller
             'recentInvoices',
             'pendingNominationsCount',
             'pendingMessagesCount',
-            'unverifiedLicensesCount'
+            'unverifiedLicensesCount',
+            'pendingDocumentsCount',
+            'pendingBannersCount'
         ));
     }
 }

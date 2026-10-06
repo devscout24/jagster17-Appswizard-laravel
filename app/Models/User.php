@@ -33,6 +33,7 @@ class User extends Authenticatable implements JWTSubject
         'phone',
         'avatar',
         'status',
+        'notification_preferences',
     ];
 
     /**
@@ -55,6 +56,7 @@ class User extends Authenticatable implements JWTSubject
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'notification_preferences' => 'array',
         ];
     }
 
@@ -203,7 +205,9 @@ class User extends Authenticatable implements JWTSubject
      */
     public function subscription(): HasOne
     {
-        return $this->hasOne(Subscription::class, 'business_id')->latestOfMany();
+        // The newest subscription that hasn't been cancelled (plan changes cancel the previous one)
+        return $this->hasOne(Subscription::class, 'business_id')
+            ->ofMany(['id' => 'max'], fn ($query) => $query->where('status', '!=', 'cancelled'));
     }
 
     /**
@@ -253,5 +257,38 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->hasMany(SavedContractor::class, 'user_id');
     }
-}
 
+    /**
+     * Customers this contractor bills (with or without a ValorHub account).
+     */
+    public function contractorCustomers(): HasMany
+    {
+        return $this->hasMany(ContractorCustomer::class, 'business_id');
+    }
+
+    public function galleryPhotos(): HasMany
+    {
+        return $this->hasMany(GalleryPhoto::class, 'business_id');
+    }
+
+    public function banners(): HasMany
+    {
+        return $this->hasMany(Banner::class, 'business_id');
+    }
+
+    public function businessDocuments(): HasMany
+    {
+        return $this->hasMany(BusinessDocument::class, 'business_id');
+    }
+
+    /**
+     * Notification preferences with defaults for anything not set yet.
+     */
+    public function notificationPreferences(): array
+    {
+        return array_merge(
+            ['quotes' => true, 'messages' => true, 'payments' => true, 'reviews' => true],
+            $this->notification_preferences ?? [],
+        );
+    }
+}

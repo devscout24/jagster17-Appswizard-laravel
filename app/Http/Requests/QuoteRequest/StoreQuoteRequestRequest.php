@@ -38,6 +38,10 @@ class StoreQuoteRequestRequest extends FormRequest
             'zip_code' => ['required', 'string', 'max:20'],
             'city' => ['required', 'string', 'max:100'],
             'state' => ['required', 'string', 'max:100'],
+            // Guests (not logged in) must say who they are so the quote can be tracked and replied to
+            'name' => [auth('api')->check() ? 'nullable' : 'required', 'string', 'max:255'],
+            'email' => [auth('api')->check() ? 'nullable' : 'required', 'email', 'max:255'],
+            'phone' => ['nullable', 'string', 'max:25'],
         ];
     }
 }
