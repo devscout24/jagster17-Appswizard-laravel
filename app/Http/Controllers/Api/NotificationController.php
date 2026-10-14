@@ -15,11 +15,11 @@ class NotificationController extends Controller
     use ApiResponseTrait;
 
     /**
-     * Resolve authenticated user or fallback.
+     * Resolve the authenticated user (routes are guarded by auth:api).
      */
     protected function resolveUser(): User
     {
-        return auth('api')->user() ?? User::first();
+        return auth('api')->user();
     }
 
     /**
@@ -90,6 +90,16 @@ class NotificationController extends Controller
             ->update(['read_at' => now()]);
 
         return $this->success(null, 'All notifications marked as read.');
+    }
+
+    /**
+     * Clear all notifications for the current user.
+     */
+    public function clearAll(): JsonResponse
+    {
+        Notification::where('user_id', $this->resolveUser()->id)->delete();
+
+        return $this->success(null, 'All notifications cleared.');
     }
 
     /**

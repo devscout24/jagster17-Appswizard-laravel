@@ -24,6 +24,7 @@ class CustomerPortalTest extends TestCase
             'password' => 'secret123',
             'status' => 'active',
         ]);
+        $customer->assignRole('customer');
         CustomerProfile::create(['user_id' => $customer->id, 'city' => 'Austin', 'state' => 'TX']);
 
         $contractor = User::create([
@@ -32,6 +33,8 @@ class CustomerPortalTest extends TestCase
             'password' => 'secret123',
             'status' => 'active',
         ]);
+
+        $contractor->assignRole('business');
         BusinessProfile::create(['user_id' => $contractor->id, 'business_name' => 'Iron Ridge Co.', 'member_since' => '2021-01-01']);
 
         QuoteRequest::create([
@@ -104,6 +107,7 @@ class CustomerPortalTest extends TestCase
             'password' => 'secret123',
             'status' => 'active',
         ]);
+        $customer->assignRole('customer');
 
         $contractor = User::create([
             'name' => 'Marcus Rivera',
@@ -111,6 +115,8 @@ class CustomerPortalTest extends TestCase
             'password' => 'secret123',
             'status' => 'active',
         ]);
+
+        $contractor->assignRole('business');
         BusinessProfile::create(['user_id' => $contractor->id, 'business_name' => 'Iron Ridge Co.', 'member_since' => '2021-01-01']);
 
         $quote = QuoteRequest::create([
@@ -169,6 +175,7 @@ class CustomerPortalTest extends TestCase
             'password' => 'secret123',
             'status' => 'active',
         ]);
+        $customer->assignRole('customer');
 
         $contractor = User::create([
             'name' => 'Marcus Rivera',
@@ -176,6 +183,8 @@ class CustomerPortalTest extends TestCase
             'password' => 'secret123',
             'status' => 'active',
         ]);
+
+        $contractor->assignRole('business');
         BusinessProfile::create(['user_id' => $contractor->id, 'business_name' => 'Iron Ridge Co.', 'member_since' => '2021-01-01']);
 
         $invoice = Invoice::create([

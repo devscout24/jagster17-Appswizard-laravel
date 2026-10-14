@@ -31,20 +31,11 @@ class ContractorPortalController extends Controller
     use ApiResponseTrait;
 
     /**
-     * Get the authenticated contractor user.
+     * Get the authenticated contractor user (routes are guarded by auth:api + role:business).
      */
     protected function resolveContractor(): User
     {
-        $user = auth('api')->user();
-
-        if (! $user) {
-            // Fallback for demonstration / seed testing if unauthenticated
-            $user = User::whereHas('roles', fn ($q) => $q->where('name', 'business'))
-                ->with(['businessProfile', 'subscription.plan'])
-                ->first() ?? User::first();
-        }
-
-        return $user;
+        return auth('api')->user();
     }
 
     /**
@@ -463,9 +454,22 @@ class ContractorPortalController extends Controller
             });
         }
 
+        if ($request->filled('customer_id')) {
+            $query->where('customer_id', $request->integer('customer_id'));
+        }
+
+        if ($request->filled('from')) {
+            $query->whereDate('issued_at', '>=', $request->date('from'));
+        }
+
+        if ($request->filled('to')) {
+            $query->whereDate('issued_at', '<=', $request->date('to'));
+        }
+
         $invoices = $query->latest('issued_at')->paginate($request->query('per_page', 10));
 
         $data = [
+            'summary'    => $this->invoiceSummary($user),
             'counts'     => $counts,
             'items'      => ContractorInvoiceResource::collection($invoices->items()),
             'pagination' => [
@@ -477,6 +481,68 @@ class ContractorPortalController extends Controller
         ];
 
         return $this->success($data, 'Contractor invoices retrieved successfully.');
+    }
+
+    /**
+     * KPI cards above the invoice table (Node 3422-1090).
+     */
+    private function invoiceSummary(User $user): array
+    {
+        $base = Invoice::where('business_id', $user->id);
+
+        $outstanding = (clone $base)->whereIn('status', ['pending', 'overdue']);
+        $overdue = (clone $base)->where('status', 'overdue');
+        $drafts = (clone $base)->where('status', 'draft');
+        $paidThisMonth = (clone $base)->where('status', 'paid')
+            ->whereBetween('paid_at', [now()->startOfMonth(), now()->endOfMonth()]);
+
+        $avgDays = (clone $base)->where('status', 'paid')
+            ->where('paid_at', '>=', now()->subDays(90))
+            ->get(['issued_at', 'paid_at'])
+            ->avg(fn (Invoice $invoice) => $invoice->issued_at->diffInDays($invoice->paid_at));
+
+        $money = fn (float $value) => '$' . number_format($value, 0);
+        $plural = fn (int $count, string $word) => $count . ' ' . $word . ($count === 1 ? '' : 's');
+
+        $outstandingCount = (clone $outstanding)->count();
+        $overdueCount = (clone $overdue)->count();
+        $draftCount = (clone $drafts)->count();
+
+        return [
+            'total_outstanding' => [
+                'amount'  => $amount = (float) (clone $outstanding)->sum('amount'),
+                'display' => $money($amount),
+                'count'   => $outstandingCount,
+                'label'   => $plural($outstandingCount, 'invoice'),
+            ],
+            'paid_this_month' => [
+                'amount'  => $amount = (float) $paidThisMonth->sum('amount'),
+                'display' => $money($amount),
+            ],
+            'overdue' => [
+                'amount'  => $amount = (float) (clone $overdue)->sum('amount'),
+                'display' => $money($amount),
+                'count'   => $overdueCount,
+                'label'   => $plural($overdueCount, 'invoice'),
+            ],
+            'draft' => [
+                'amount'  => $amount = (float) (clone $drafts)->sum('amount'),
+                'display' => $money($amount),
+                'count'   => $draftCount,
+                'label'   => $plural($draftCount, 'draft'),
+            ],
+            'average_days_to_get_paid' => [
+                'days'    => $avgDays !== null ? (int) round($avgDays) : null,
+                'display' => $avgDays !== null ? $plural((int) round($avgDays), 'day') : '—',
+                'label'   => 'Based on last 90 days',
+            ],
+            // No payout provider is connected yet, so nothing is held for instant payout.
+            'available_for_payout' => [
+                'amount'          => 0.0,
+                'display'         => '$0.00',
+                'payouts_enabled' => false,
+            ],
+        ];
     }
 
     /**
@@ -513,18 +579,28 @@ class ContractorPortalController extends Controller
 
         if (! empty($validated['project_id'])) {
             $project = Project::where('business_id', $user->id)->find($validated['project_id']);
-            if ($project) {
-                $customerId = $project->customer_id;
+            if (! $project) {
+                return $this->notFound('Project not found.');
             }
+            $customerId = $project->customer_id;
         }
 
         if (! $customerId) {
             return $this->error('Please specify a client for this invoice.', 422);
         }
 
+        if (! User::role('customer', 'api')->whereKey($customerId)->exists()) {
+            return $this->error('The selected client is not a customer account.', 422);
+        }
+
         $invoiceNumber = ! empty($validated['invoice_number'])
             ? $validated['invoice_number']
-            : 'INV-' . now()->format('Ymd') . '-' . str_pad((string) mt_rand(1, 999), 3, '0', STR_PAD_LEFT);
+            : Invoice::nextNumber();
+
+        // With line items the total is always derived from them.
+        if (! empty($validated['items'])) {
+            $validated['amount'] = round(collect($validated['items'])->sum(fn ($item) => $item['quantity'] * $item['price']), 2);
+        }
 
         $sendImmediately = $validated['send_immediately'] ?? true;
         $status = $sendImmediately ? 'pending' : 'draft';
@@ -538,10 +614,14 @@ class ContractorPortalController extends Controller
             'labor_amount'     => $validated['labor_amount'] ?? null,
             'materials_amount' => $validated['materials_amount'] ?? null,
             'platform_fee'     => $validated['platform_fee'] ?? null,
+            'items'            => $validated['items'] ?? null,
+            'bill_to_address'  => $validated['bill_to_address'] ?? null,
             'notes'            => $validated['notes'] ?? null,
             'issued_at'        => $validated['issued_at'] ?? now(),
             'due_at'           => $validated['due_at'],
             'status'           => $status,
+            'approved_at'      => $sendImmediately ? now() : null,
+            'sent_at'          => $sendImmediately ? now() : null,
         ]);
 
         // If sent to customer, create notification
@@ -752,7 +832,7 @@ class ContractorPortalController extends Controller
     {
         $user = $this->resolveContractor();
 
-        $user->loadMissing(['businessProfile', 'roles']);
+        $user->loadMissing(['businessProfile.primaryCategory', 'roles']);
 
         return $this->success(
             new ContractorProfileDetailResource($user),
@@ -789,7 +869,7 @@ class ContractorPortalController extends Controller
         }
 
         return $this->success(
-            new ContractorProfileDetailResource($user->fresh(['businessProfile', 'roles'])),
+            new ContractorProfileDetailResource($user->fresh(['businessProfile.primaryCategory', 'roles'])),
             'Profile updated successfully.'
         );
     }

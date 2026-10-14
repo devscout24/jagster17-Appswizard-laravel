@@ -3,10 +3,13 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
+use App\Traits\HandlesUploads;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class ContractorProfileDetailResource extends JsonResource
 {
+    use HandlesUploads;
+
     /**
      * Transform the resource into an array matching the Contractor Profile Settings Screen (Node 3363-11).
      *
@@ -27,7 +30,14 @@ class ContractorProfileDetailResource extends JsonResource
                 'business_type' => $profile?->business_type,
                 'phone_number' => $profile?->phone_number ?? $this->phone,
                 'tax_id' => $profile?->tax_id,
-                'cover_photo' => $profile?->cover_photo,
+                'cover_photo' => $this->uploadUrl($profile?->cover_photo),
+                'logo' => $this->uploadUrl($profile?->logo),
+                'slug' => $profile?->slug,
+                'primary_category' => $profile?->primaryCategory ? [
+                    'id' => $profile->primaryCategory->id,
+                    'name' => $profile->primaryCategory->name,
+                ] : null,
+                'address' => $profile?->address,
                 'city' => $profile?->city,
                 'state' => $profile?->state,
                 'zip_code' => $profile?->zip_code,
@@ -40,6 +50,9 @@ class ContractorProfileDetailResource extends JsonResource
                 'hourly_rate' => $profile?->hourly_rate ? (float) $profile->hourly_rate : null,
                 'years_experience' => $profile?->years_experience,
                 'license_number' => $profile?->license_number,
+                'insurance_company' => $profile?->insurance_company,
+                'insurance_policy_number' => $profile?->insurance_policy_number,
+                'emergency_service' => (bool) ($profile?->emergency_service ?? false),
                 'service_radius' => $profile?->service_radius ?? 25,
                 'business_hours' => $profile?->business_hours ?? 'Mon-Sat 7am-7pm',
                 'languages' => $profile?->languages ?? ['English'],
@@ -52,6 +65,14 @@ class ContractorProfileDetailResource extends JsonResource
                 'is_license_verified' => (bool) ($profile?->is_license_verified ?? false),
                 'is_available_today' => (bool) ($profile?->is_available_today ?? false),
                 'id_me_verified_at' => $profile?->id_me_verified_at?->toIso8601String(),
+            ],
+            'documents' => [
+                'license_document' => $this->uploadUrl($profile?->license_document),
+                'license_status' => $profile?->license_document
+                    ? ($profile->is_license_verified ? 'Uploaded · Verified' : 'Uploaded · Pending review')
+                    : 'Not uploaded',
+                'logo_status' => $profile?->logo ? 'Uploaded' : 'Not uploaded',
+                'cover_photo_status' => $profile?->cover_photo ? 'Uploaded' : 'Not uploaded',
             ],
             'media' => [
                 'gallery_images' => $profile?->gallery_images ?? [],

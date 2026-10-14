@@ -35,6 +35,8 @@ class ContractorProjectsAndInvoicesTest extends TestCase
         ]);
 
         $customer = User::factory()->create(['name' => 'Alice Client']);
+
+        $customer->assignRole('customer');
         $token = auth('api')->login($contractor);
         $authHeader = ['Authorization' => 'Bearer ' . $token];
 
@@ -116,6 +118,8 @@ class ContractorProjectsAndInvoicesTest extends TestCase
         ]);
 
         $customer = User::factory()->create(['name' => 'David Miller', 'email' => 'david@client.test']);
+
+        $customer->assignRole('customer');
 
         $project = Project::create([
             'business_id'      => $contractor->id,

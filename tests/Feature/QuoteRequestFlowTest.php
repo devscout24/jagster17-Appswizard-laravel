@@ -21,6 +21,7 @@ class QuoteRequestFlowTest extends TestCase
             'password' => 'secret123',
             'status' => 'active',
         ]);
+        $contractor->assignRole('business');
 
         BusinessProfile::create([
             'user_id' => $contractor->id,
@@ -77,6 +78,8 @@ class QuoteRequestFlowTest extends TestCase
             'status' => 'active',
         ]);
 
+        $contractor->assignRole('business');
+
         BusinessProfile::create([
             'user_id' => $contractor->id,
             'business_name' => 'Iron Ridge Co.',
@@ -92,6 +95,8 @@ class QuoteRequestFlowTest extends TestCase
             'password' => 'secret123',
             'status' => 'active',
         ]);
+
+        $customer->assignRole('customer');
 
         $payload = [
             'category_id' => $category->id,
@@ -178,6 +183,7 @@ class QuoteRequestFlowTest extends TestCase
             'password' => 'secret123',
             'status' => 'active',
         ]);
+        $customer->assignRole('customer');
 
         $quote = QuoteRequest::create([
             'reference_number' => 'VH-20260727-042',
@@ -194,7 +200,10 @@ class QuoteRequestFlowTest extends TestCase
             'requested_at' => now(),
         ]);
 
-        $response = $this->getJson('/api/quotes/'.$quote->id);
+        $token = auth('api')->login($customer);
+
+        $response = $this->withHeaders(['Authorization' => 'Bearer '.$token])
+            ->getJson('/api/quotes/'.$quote->id);
 
         $response->assertStatus(200)
             ->assertJsonPath('status', true)

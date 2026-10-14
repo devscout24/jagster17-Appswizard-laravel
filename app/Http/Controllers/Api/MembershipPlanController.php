@@ -89,7 +89,7 @@ class MembershipPlanController extends Controller
                 'business_id'   => $user->id,
                 'plan_id'       => $plan->id,
                 'billing_cycle' => $billingCycle,
-                'status'        => 'active',
+                'status'        => $isFree ? 'active' : 'past_due', // paid plans activate after checkout
                 'renews_at'     => $renewsAt,
             ]);
 

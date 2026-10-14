@@ -119,6 +119,7 @@ class MembershipPlanTest extends TestCase
     public function test_validation_error_when_selecting_invalid_plan(): void
     {
         $user = User::factory()->create();
+        $user->assignRole('business');
         $token = auth('api')->login($user);
 
         $response = $this->withHeader('Authorization', 'Bearer ' . $token)
@@ -201,7 +202,7 @@ class MembershipPlanTest extends TestCase
             'business_id'   => $user->id,
             'plan_id'       => $plan->id,
             'billing_cycle' => 'annual',
-            'status'        => 'active',
+            'status'        => 'past_due', // paid plans activate after checkout
         ]);
 
         $profile->refresh();

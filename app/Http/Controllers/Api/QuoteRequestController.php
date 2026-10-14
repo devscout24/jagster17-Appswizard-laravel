@@ -73,16 +73,14 @@ class QuoteRequestController extends Controller
      */
     public function store(StoreQuoteRequestRequest $request): JsonResponse
     {
+        // Route is guarded by auth:api + role:customer — the wizard has no contact step.
         $user = auth('api')->user();
-        if (!$user) {
-            // Find or create demo/guest customer user
-            $user = User::firstOrCreate(
-                ['email' => 'guest.customer@valorhub.test'],
-                ['name' => 'Homeowner Customer', 'password' => bcrypt(Str::random(16)), 'status' => 'active']
-            );
-        }
 
         $businessId = $request->validated('contractor_id') ?? $request->validated('business_id');
+
+        if ($businessId && ! User::role('business', 'api')->whereKey($businessId)->exists()) {
+            return $this->error('The selected contractor could not be found.', 422);
+        }
         $categoryId = $request->validated('category_id');
         $serviceType = $request->validated('service_type');
 
@@ -133,7 +131,7 @@ class QuoteRequestController extends Controller
 
         $query = QuoteRequest::query()
             ->with(['business.businessProfile', 'category', 'customer'])
-            ->when($userId, function ($q) use ($userId) {
+            ->where(function ($q) use ($userId) {
                 $q->where('customer_id', $userId)
                   ->orWhere('business_id', $userId);
             })
@@ -158,7 +156,11 @@ class QuoteRequestController extends Controller
      */
     public function show(int $id): JsonResponse
     {
-        $quoteRequest = QuoteRequest::with(['business.businessProfile', 'category', 'customer.customerProfile'])->find($id);
+        $userId = auth('api')->id();
+
+        $quoteRequest = QuoteRequest::with(['business.businessProfile', 'category', 'customer.customerProfile'])
+            ->where(fn ($q) => $q->where('customer_id', $userId)->orWhere('business_id', $userId))
+            ->find($id);
 
         if (!$quoteRequest) {
             return $this->notFound('Quote request not found');

@@ -13,14 +13,20 @@ class BusinessProfile extends Model
     protected $fillable = [
         'user_id',
         'business_name',
+        'slug',
         'owner_name',
         'business_type',
+        'primary_category_id',
         'phone_number',
         'tax_id',
+        'address',
         'city',
         'state',
         'zip_code',
+        'logo',
         'cover_photo',
+        'banner_image',
+        'banner_headline',
         'years_experience',
         'member_since',
         'is_elite',
@@ -29,6 +35,10 @@ class BusinessProfile extends Model
         'is_available_today',
         'is_license_verified',
         'license_number',
+        'license_document',
+        'insurance_company',
+        'insurance_policy_number',
+        'emergency_service',
         'business_hours',
         'service_radius',
         'languages',
@@ -40,6 +50,7 @@ class BusinessProfile extends Model
         'review_count',
         'bio',
         'website_url',
+        'custom_domain',
         'linkedin_url',
         'facebook_url',
         'instagram_url',
@@ -61,6 +72,7 @@ class BusinessProfile extends Model
             'is_id_verified'       => 'boolean',
             'is_available_today'   => 'boolean',
             'is_license_verified'  => 'boolean',
+            'emergency_service'    => 'boolean',
             'service_radius'       => 'integer',
             'languages'            => 'array',
             'service_areas'        => 'array',
@@ -80,5 +92,10 @@ class BusinessProfile extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function primaryCategory(): BelongsTo
+    {
+        return $this->belongsTo(Category::class, 'primary_category_id');
     }
 }

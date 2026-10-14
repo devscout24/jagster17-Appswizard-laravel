@@ -27,6 +27,7 @@ class CustomerSavedContractorsTest extends TestCase
             'name' => 'Jane Customer',
             'email' => 'jane@example.com',
         ]);
+        $this->customer->assignRole('customer');
         CustomerProfile::create([
             'user_id' => $this->customer->id,
             'city' => 'Phoenix',
@@ -47,6 +48,7 @@ class CustomerSavedContractorsTest extends TestCase
             'email' => 'roofguard@example.com',
             'avatar' => 'https://example.com/avatar.jpg',
         ]);
+        $this->contractor->assignRole('business');
         BusinessProfile::create([
             'user_id' => $this->contractor->id,
             'business_name' => 'RoofGuard Pro',

@@ -33,6 +33,7 @@ class User extends Authenticatable implements JWTSubject
         'phone',
         'avatar',
         'status',
+        'notification_preferences',
     ];
 
     /**
@@ -55,6 +56,7 @@ class User extends Authenticatable implements JWTSubject
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'notification_preferences' => 'array',
         ];
     }
 
@@ -249,6 +251,11 @@ class User extends Authenticatable implements JWTSubject
     /**
      * Saved / Bookmarked contractors
      */
+    public function galleryItems(): HasMany
+    {
+        return $this->hasMany(GalleryItem::class, 'business_id');
+    }
+
     public function savedContractors(): HasMany
     {
         return $this->hasMany(SavedContractor::class, 'user_id');

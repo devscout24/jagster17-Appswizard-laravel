@@ -18,6 +18,11 @@ class UpdateContractorProfileRequest extends FormRequest
             'owner_name'       => ['sometimes', 'nullable', 'string', 'max:255'],
             'phone_number'     => ['sometimes', 'nullable', 'string', 'max:50'],
             'tax_id'           => ['sometimes', 'nullable', 'string', 'max:50'],
+            'primary_category_id' => ['sometimes', 'nullable', 'integer', 'exists:categories,id'],
+            'address'          => ['sometimes', 'nullable', 'string', 'max:255'],
+            'insurance_company' => ['sometimes', 'nullable', 'string', 'max:255'],
+            'insurance_policy_number' => ['sometimes', 'nullable', 'string', 'max:100'],
+            'emergency_service' => ['sometimes', 'boolean'],
             'city'             => ['sometimes', 'nullable', 'string', 'max:100'],
             'state'            => ['sometimes', 'nullable', 'string', 'max:100'],
             'zip_code'         => ['sometimes', 'nullable', 'string', 'max:20'],
@@ -31,8 +36,6 @@ class UpdateContractorProfileRequest extends FormRequest
             'languages.*'      => ['string'],
             'service_areas'    => ['sometimes', 'nullable', 'array'],
             'service_areas.*'  => ['string'],
-            'gallery_images'   => ['sometimes', 'nullable', 'array'],
-            'gallery_images.*' => ['string'],
             'video_urls'       => ['sometimes', 'nullable', 'array'],
             'video_urls.*'     => ['string'],
             'website_url'      => ['sometimes', 'nullable', 'string', 'max:255'],
@@ -40,7 +43,6 @@ class UpdateContractorProfileRequest extends FormRequest
             'facebook_url'     => ['sometimes', 'nullable', 'string', 'max:255'],
             'instagram_url'    => ['sometimes', 'nullable', 'string', 'max:255'],
             'twitter_url'      => ['sometimes', 'nullable', 'string', 'max:255'],
-            'cover_photo'      => ['sometimes', 'nullable', 'string', 'max:255'],
         ];
     }
 }

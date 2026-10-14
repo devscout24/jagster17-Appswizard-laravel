@@ -24,4 +24,27 @@ return Application::configure(basePath: dirname(__DIR__))
         $exceptions->shouldRenderJsonWhen(
             fn(Request $request) => $request->is('api/*') || $request->expectsJson(),
         );
+
+        // Keep auth / role failures in the same { status, message, data, code } shape as ApiResponseTrait.
+        $exceptions->render(function (\Illuminate\Auth\AuthenticationException $e, Request $request) {
+            if ($request->is('api/*')) {
+                return response()->json([
+                    'status'  => false,
+                    'message' => 'Unauthenticated. Please log in to continue.',
+                    'data'    => null,
+                    'code'    => 401,
+                ], 401);
+            }
+        });
+
+        $exceptions->render(function (\Spatie\Permission\Exceptions\UnauthorizedException $e, Request $request) {
+            if ($request->is('api/*')) {
+                return response()->json([
+                    'status'  => false,
+                    'message' => 'Your account does not have access to this area.',
+                    'data'    => null,
+                    'code'    => 403,
+                ], 403);
+            }
+        });
     })->create();
