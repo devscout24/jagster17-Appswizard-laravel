@@ -47,13 +47,13 @@ class AdminUserController extends Controller
             'phone' => ['nullable', 'string', 'max:50'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
             'role' => ['required', 'in:super_admin,admin'],
-            'status' => ['required', 'in:active,inactive'],
+            'status' => ['required', 'in:active,suspended'],
         ]);
 
         $user = User::create([
             'name' => $validated['name'],
             'email' => $validated['email'],
-            'phone' => $validated['phone'],
+            'phone' => $validated['phone'] ?? null,
             'password' => Hash::make($validated['password']),
             'status' => $validated['status'],
             'avatar' => 'assets/images/users/user-' . rand(1, 4) . '.jpg',
@@ -92,15 +92,19 @@ class AdminUserController extends Controller
             'phone' => ['nullable', 'string', 'max:50'],
             'password' => ['nullable', 'string', 'min:8', 'confirmed'],
             'role' => ['required', 'in:super_admin,admin'],
-            'status' => ['required', 'in:active,inactive'],
+            'status' => ['required', 'in:active,suspended'],
         ]);
 
         $updateData = [
             'name' => $validated['name'],
             'email' => $validated['email'],
-            'phone' => $validated['phone'],
             'status' => $validated['status'],
         ];
+
+        // phone is not on the edit form; only overwrite it when it is submitted.
+        if (array_key_exists('phone', $validated)) {
+            $updateData['phone'] = $validated['phone'];
+        }
 
         if (!empty($validated['password'])) {
             $updateData['password'] = Hash::make($validated['password']);

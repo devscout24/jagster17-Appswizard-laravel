@@ -22,7 +22,8 @@
                 <select name="status" class="form-select form-select-sm" onchange="this.form.submit()">
                     <option value="all">All Statuses</option>
                     <option value="active" {{ $status === 'active' ? 'selected' : '' }}>Active</option>
-                    <option value="inactive" {{ $status === 'inactive' ? 'selected' : '' }}>Inactive</option>
+                    <option value="pending" {{ $status === 'pending' ? 'selected' : '' }}>Pending</option>
+                    <option value="suspended" {{ $status === 'suspended' ? 'selected' : '' }}>Suspended</option>
                 </select>
             </div>
 

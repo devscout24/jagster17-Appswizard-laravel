@@ -116,7 +116,7 @@ class ContractorController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', 'unique:users,email,' . $contractor->id],
             'phone' => ['nullable', 'string', 'max:50'],
-            'status' => ['required', 'in:active,inactive'],
+            'status' => ['required', 'in:active,pending,suspended'],
             'business_name' => ['required', 'string', 'max:255'],
             'owner_name' => ['nullable', 'string', 'max:255'],
             'business_type' => ['nullable', 'string', 'max:100'],
@@ -147,7 +147,6 @@ class ContractorController extends Controller
 
             $profileData = [
                 'business_name' => $validated['business_name'],
-                'owner_name' => $validated['owner_name'],
                 'business_type' => $validated['business_type'],
                 'phone_number' => $validated['phone'],
                 'tax_id' => $validated['tax_id'],
@@ -166,6 +165,11 @@ class ContractorController extends Controller
                 'is_license_verified' => $request->boolean('is_license_verified'),
                 'is_available_today' => $request->boolean('is_available_today'),
             ];
+
+            // owner_name is not on the edit form; only overwrite it when it is submitted.
+            if (array_key_exists('owner_name', $validated)) {
+                $profileData['owner_name'] = $validated['owner_name'];
+            }
 
             if ($contractor->businessProfile) {
                 $contractor->businessProfile->update($profileData);

@@ -22,7 +22,8 @@
                 <select name="status" class="form-select form-select-sm" onchange="this.form.submit()">
                     <option value="all">All Statuses</option>
                     <option value="active" {{ $status === 'active' ? 'selected' : '' }}>Active</option>
-                    <option value="inactive" {{ $status === 'inactive' ? 'selected' : '' }}>Inactive</option>
+                    <option value="pending" {{ $status === 'pending' ? 'selected' : '' }}>Pending</option>
+                    <option value="suspended" {{ $status === 'suspended' ? 'selected' : '' }}>Suspended</option>
                 </select>
             </div>
 
@@ -120,8 +121,10 @@
                             <td>
                                 @if($contractor->status === 'active')
                                     <span class="badge bg-success-subtle text-success text-uppercase">Active</span>
+                                @elseif($contractor->status === 'pending')
+                                    <span class="badge bg-warning-subtle text-warning text-uppercase">Pending</span>
                                 @else
-                                    <span class="badge bg-danger-subtle text-danger text-uppercase">Inactive</span>
+                                    <span class="badge bg-danger-subtle text-danger text-uppercase">Suspended</span>
                                 @endif
                             </td>
                             <td class="text-end">

@@ -71,6 +71,29 @@
                         <span class="text-muted">State License:</span>
                         <span class="fw-medium text-primary">{{ $contractor->businessProfile?->license_number ?? 'Unlicensed' }}</span>
                     </li>
+                    @php
+                        $licenseDoc = $contractor->businessProfile?->license_document;
+                        $licenseUrl = $licenseDoc ? (\Illuminate\Support\Str::startsWith($licenseDoc, ['http://', 'https://']) ? $licenseDoc : \Illuminate\Support\Facades\Storage::disk('public')->url($licenseDoc)) : null;
+                    @endphp
+                    <li class="mb-2 d-flex justify-content-between">
+                        <span class="text-muted">License Document:</span>
+                        <span class="fw-medium">
+                            @if($licenseUrl)
+                                <a href="{{ $licenseUrl }}" target="_blank" rel="noopener">View document</a>
+                                @if($contractor->businessProfile?->is_license_verified)
+                                    <span class="badge bg-success-subtle text-success ms-1">Verified</span>
+                                @else
+                                    <span class="badge bg-warning-subtle text-warning ms-1">Pending review</span>
+                                @endif
+                            @else
+                                Not uploaded
+                            @endif
+                        </span>
+                    </li>
+                    <li class="mb-2 d-flex justify-content-between">
+                        <span class="text-muted">Insurance:</span>
+                        <span class="fw-medium">{{ collect([$contractor->businessProfile?->insurance_company, $contractor->businessProfile?->insurance_policy_number])->filter()->join(' · ') ?: 'Not provided' }}</span>
+                    </li>
                     <li class="mb-2 d-flex justify-content-between">
                         <span class="text-muted">Service Radius:</span>
                         <span class="fw-medium">{{ $contractor->businessProfile?->service_radius ?? 25 }} miles</span>

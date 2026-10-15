@@ -92,7 +92,7 @@ class CustomerController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', 'unique:users,email,' . $customer->id],
             'phone' => ['nullable', 'string', 'max:50'],
-            'status' => ['required', 'in:active,inactive'],
+            'status' => ['required', 'in:active,pending,suspended'],
             'city' => ['nullable', 'string', 'max:100'],
             'state' => ['nullable', 'string', 'max:50'],
         ]);

@@ -45,29 +45,29 @@ Route::prefix('admin')->name('admin.')->middleware(['web', 'admin.auth'])->group
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     // Contractors & Businesses
-    Route::resource('contractors', ContractorController::class);
+    Route::resource('contractors', ContractorController::class)->except(['create', 'store']); // created on the site, not in admin
     Route::post('contractors/{id}/toggle-badge', [ContractorController::class, 'toggleBadge'])->name('contractors.toggle-badge');
 
     // Customers
-    Route::resource('customers', CustomerController::class);
+    Route::resource('customers', CustomerController::class)->except(['create', 'store']); // created on the site, not in admin
 
     // Categories Taxonomy
     Route::resource('categories', CategoryController::class)->except(['show']);
 
     // Contractor Services
-    Route::resource('services', ServiceController::class);
+    Route::resource('services', ServiceController::class)->except(['create', 'store']); // created on the site, not in admin
 
     // Marketplace Products
     Route::resource('products', ProductController::class);
 
     // Quotes & Leads
-    Route::resource('quotes', QuoteRequestController::class);
+    Route::resource('quotes', QuoteRequestController::class)->except(['create', 'store']); // created on the site, not in admin
 
     // Projects Management
-    Route::resource('projects', ProjectController::class);
+    Route::resource('projects', ProjectController::class)->except(['create', 'store']); // created on the site, not in admin
 
     // Invoices & Payments
-    Route::resource('invoices', InvoiceController::class);
+    Route::resource('invoices', InvoiceController::class)->except(['create', 'store']); // created on the site, not in admin
     Route::get('payments', [InvoiceController::class, 'payments'])->name('payments.index');
 
     // Subscriptions & Plans

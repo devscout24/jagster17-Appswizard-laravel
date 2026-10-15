@@ -44,7 +44,8 @@
                     <label class="form-label">Account Status <span class="text-danger">*</span></label>
                     <select name="status" class="form-select" required>
                         <option value="active" {{ old('status', $customer->status) === 'active' ? 'selected' : '' }}>Active</option>
-                        <option value="inactive" {{ old('status', $customer->status) === 'inactive' ? 'selected' : '' }}>Inactive / Suspended</option>
+                        <option value="pending" {{ old('status', $customer->status) === 'pending' ? 'selected' : '' }}>Pending</option>
+                        <option value="suspended" {{ old('status', $customer->status) === 'suspended' ? 'selected' : '' }}>Inactive / Suspended</option>
                     </select>
                 </div>
             </div>
