@@ -1,0 +1,100 @@
+# Deploys the Laravel API to the live server over FTP.
+#
+# Setup — GitHub repo → Settings → Secrets and variables → Actions:
+#   Secrets (required)
+#     FTP_SERVER       host name, e.g. ftp.thenightowl.team (no ftp:// prefix)
+#     FTP_USERNAME     FTP user
+#     FTP_PASSWORD     FTP password
+#     FTP_SERVER_DIR   project root on the server, ending in "/", e.g. /valorhub/
+#                      (the folder that holds app/, public/, vendor/ … — not public/ itself)
+#   Variables (optional)
+#     FTP_PROTOCOL     ftps (default) or ftp if the host has no TLS
+#     FTP_PORT         21 (default)
+#
+# The server keeps its own .env and storage/ (uploads, logs, sessions); neither is uploaded.
+# FTP can't run artisan, so after a deploy that adds migrations or config, run on the server:
+#   php artisan migrate --force && php artisan optimize:clear
+
+name: Deploy API (FTP)
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "List what would change without uploading"
+        type: boolean
+        default: false
+
+# One deploy at a time; a newer push waits for the running one
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Set up PHP 8.3
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.3"
+          extensions: mbstring, dom, fileinfo, gd, zip, intl, bcmath, sodium, pdo_mysql
+          tools: composer:v2
+          coverage: none
+
+      # vendor/ is gitignored, so production dependencies are installed here and uploaded
+      - name: Install Composer dependencies (production)
+        run: composer install --no-dev --prefer-dist --no-interaction --no-progress --optimize-autoloader
+
+      - name: Set up Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      # public/build/ is gitignored; Vite assets are built here
+      - name: Build front-end assets
+        run: |
+          npm ci
+          npm run build
+
+      - name: Upload to server
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ftp.thenightowl.team
+          username: valorhub@thenightowl.team
+          password: "E9H@CdsvtnJiA#m$"
+          port: 21
+          local-dir: ./
+          dry-run: ${{ inputs.dry_run == true }}
+          # Only files that changed since the last deploy are sent (tracked in
+          # .ftp-deploy-sync-state.json on the server); the first run uploads everything.
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+            **/.DS_Store
+            .github/**
+            .env
+            .env.*
+            storage/**
+            public/storage
+            public/storage/**
+            public/hot
+            tests/**
+            Template/**
+            .editorconfig
+            .npmrc
+            .phpunit.result.cache
+            phpunit.xml
+            package.json
+            package-lock.json
+            vite.config.js
+            README.md
