@@ -18,7 +18,7 @@ class BusinessOnboardingServicesRequest extends FormRequest
             'services.*.category_id'   => ['required', 'integer', 'exists:categories,id'],
             'services.*.name'          => ['required', 'string', 'max:255'],
             'services.*.description'   => ['sometimes', 'nullable', 'string', 'max:1000'],
-            'services.*.pricing_type'  => ['required', 'string', 'in:fixed,hourly,custom'],
+            'services.*.pricing_type'  => ['required', 'string', 'in:fixed,hourly,sqft,custom_quote'],
             'services.*.price'         => ['required', 'numeric', 'min:0'],
         ];
     }
